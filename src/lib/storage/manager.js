@@ -18,9 +18,11 @@ export async function loadState() {
 
 // Debounced save to reduce frequent storage writes
 export const saveState = debounce(
-    async (saveObject) => {
+    async saveObject => {
         try {
-            await getStorageArea().set(saveObject);
+            await getStorageArea().set(
+                cleanObject(saveObject, defaultStorageObject)
+            );
             console.log('Storage saved');
         } catch (err) {
             console.error('Failed to save to storage:', err);
