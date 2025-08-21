@@ -24,7 +24,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 // Button click increments counter
 clickMeBtn.addEventListener('click', () => {
     storage.count++;
-    console.log(JSON.stringify(storage));
 
     saveState(storage);
     updateDisplay();
