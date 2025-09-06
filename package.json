@@ -1,0 +1,26 @@
+{
+    "name": "webext-template-vanilla",
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "start:firefox": "web-ext run --source-dir=dist/firefox --no-reload",
+        "dev": "npm run build:firefox && concurrently -k -n WATCH,WEBEXT -c cyan,magenta \"npm:watch:firefox\" \"npm:start:firefox\"",
+        "watch:firefox": "chokidar \"src/**/*\" -c \"npm run build:firefox\" --initial",
+        "watch:chromium": "chokidar \"src/**/*\" -c \"npm run build:chromium\" --initial",
+        "build:firefox": "node build.js firefox",
+        "build:chromium": "node build.js chromium",
+        "build": "node build.js"
+    },
+    "devDependencies": {
+        "@types/archiver": "^6.0.3",
+        "@types/node": "^24.1.0",
+        "@types/webextension-polyfill": "^0.12.3",
+        "archiver": "^7.0.1",
+        "chokidar-cli": "^3.0.0",
+        "concurrently": "^9.2.0",
+        "web-ext": "^8.9.0"
+    },
+    "dependencies": {
+        "webextension-polyfill": "^0.12.0"
+    }
+}
