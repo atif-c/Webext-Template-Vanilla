@@ -1,4 +1,5 @@
 import '../../lib/browser-polyfill.min.js';
+
 const useLocalStorage = true;
 
 /**
@@ -6,7 +7,7 @@ const useLocalStorage = true;
  * @returns {browser.Storage.StorageArea}
  */
 export function getStorageArea() {
-    return useLocalStorage ? browser.storage.local : browser.storage.sync;
+	return useLocalStorage ? browser.storage.local : browser.storage.sync;
 }
 
 /**
@@ -22,64 +23,58 @@ export function getStorageArea() {
  * @returns {T} Cleaned object matching the template structure
  */
 export const cleanObject = (object = {}, template) => {
-    // Helper to clean nested objects recursively
-    function cleanNestedObject(userObj, templateObj) {
-        return cleanObject(userObj, templateObj);
-    }
+	// Helper to clean nested objects recursively
+	function cleanNestedObject(userObj, templateObj) {
+		return cleanObject(userObj, templateObj);
+	}
 
-    // Helper to clean arrays recursively if template array's first element is an object
-    cleanArray = (userArr, templateArr) => {
-        if (templateArr.length === 0) return []; // no template to clean against
+	// Helper to clean arrays recursively if template array's first element is an object
+	cleanArray = (userArr, templateArr) => {
+		if (templateArr.length === 0) return []; // no template to clean against
 
-        const templateItem = templateArr[0];
-        if (
-            typeof templateItem === 'object' &&
-            templateItem !== null &&
-            !Array.isArray(templateItem)
-        ) {
-            // Recursively clean each array item if it's an object
-            return userArr.map(item =>
-                typeof item === 'object' &&
-                item !== null &&
-                !Array.isArray(item)
-                    ? cleanObject(item, templateItem)
-                    : templateItem
-            );
-        } else {
-            // Primitive array items - accept user array if all items are same type as template item
-            const typeOfTemplateItem = typeof templateItem;
-            if (userArr.every(item => typeof item === typeOfTemplateItem)) {
-                return userArr;
-            }
-            return templateArr;
-        }
-    };
+		const templateItem = templateArr[0];
+		if (typeof templateItem === 'object' && templateItem !== null && !Array.isArray(templateItem)) {
+			// Recursively clean each array item if it's an object
+			return userArr.map(item =>
+				typeof item === 'object' && item !== null && !Array.isArray(item)
+					? cleanObject(item, templateItem)
+					: templateItem
+			);
+		} else {
+			// Primitive array items - accept user array if all items are same type as template item
+			const typeOfTemplateItem = typeof templateItem;
+			if (userArr.every(item => typeof item === typeOfTemplateItem)) {
+				return userArr;
+			}
+			return templateArr;
+		}
+	};
 
-    const result = {};
+	const result = {};
 
-    for (const [key, def] of Object.entries(template)) {
-        const val = object[key];
+	for (const [key, def] of Object.entries(template)) {
+		const val = object[key];
 
-        const defType = typeof def;
-        const defIsArray = Array.isArray(def);
+		const defType = typeof def;
+		const defIsArray = Array.isArray(def);
 
-        if (defType === 'object' && def !== null && !defIsArray) {
-            // Nested object
-            result[key] =
-                typeof val === 'object' && val !== null && !Array.isArray(val)
-                    ? cleanNestedObject(val, def)
-                    : def;
-        } else if (defIsArray) {
-            if (Array.isArray(val) && val.length > 0) {
-                result[key] = cleanArray(val, def);
-            } else {
-                result[key] = def;
-            }
-        } else {
-            // Primitive value
-            result[key] = typeof val === defType ? val : def;
-        }
-    }
+		if (defType === 'object' && def !== null && !defIsArray) {
+			// Nested object
+			result[key] =
+				typeof val === 'object' && val !== null && !Array.isArray(val)
+					? cleanNestedObject(val, def)
+					: def;
+		} else if (defIsArray) {
+			if (Array.isArray(val) && val.length > 0) {
+				result[key] = cleanArray(val, def);
+			} else {
+				result[key] = def;
+			}
+		} else {
+			// Primitive value
+			result[key] = typeof val === defType ? val : def;
+		}
+	}
 
-    return result;
+	return result;
 };
